@@ -1,7 +1,7 @@
 {
   "name": "rgb-conversion",
   "version": "0.0.0",
-  "description": "Convert RGB to other colormodels the photohsop way. Based on the AdobeColorCalculator of Rags Gardner",
+  "description": "Convert RGB to Lab the photohsop way.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -10,8 +10,6 @@
     "Photoshop",
     "RGB",
     "Convert",
-    "AdobeColorCalculator",
-    "Rags Gardner"
   ],
   "author": "Onno van der Zee",
   "license": "ISC"

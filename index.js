@@ -75,9 +75,9 @@ var invS_RGB_XYZ = function (rgbArray, iccProfile) {
 	green = green * 100
 	blue = blue * 100
 
-	var X = red * 0.4124 + green * 0.3576 + blue * 0.1805
-	var Y = red * 0.2126 + green * 0.7152 + blue * 0.0722
-	var Z = red * 0.0193 + green * 0.1192 + blue * 0.9505
+	var X = red * iccProfile.matrix.D50.X.red + green * iccProfile.matrix.D50.X.green + blue * iccProfile.matrix.D50.X.blue
+	var Y = red * iccProfile.matrix.D50.Y.red + green * iccProfile.matrix.D50.Y.green + blue * iccProfile.matrix.D50.Y.blue
+	var Z = red * iccProfile.matrix.D50.Z.red + green * iccProfile.matrix.D50.Z.green + blue * iccProfile.matrix.D50.Z.blue
 	return [ X, Y, Z ]
 }
 
@@ -102,9 +102,15 @@ var invGamma_RGB_XYZ = function (rgbArray, iccProfile) {
 	return [ X, Y, Z ]
 }
 
+var RGB_XYZ = function ( rgbArray, iccProfileName ) {
+  var RGB_XYZ_function = invGamma_RGB_XYZ
+	if ( iccProfileName === 'eciRGB_v2') {
+		RGB_XYZ_function = invS_RGB_XYZ // mss via een andere functie
+	}
+  return RGB_XYZ_function ( rgbArray, rgbSpace[iccProfileName] )
+}
+
 var XYZ_CIELab = function ( xyzArray, whitePoint) {
-	//Reference-X, Y and Z refer to specific illuminants and observers.
-	//Common reference values are available below in this same page.
 
 	var X = ( xyzArray[0] / whitePoint[0] / 100 )
 	var Y = ( xyzArray[1] / whitePoint[1] / 100 )
@@ -121,4 +127,8 @@ var XYZ_CIELab = function ( xyzArray, whitePoint) {
 	var ax = 500 * ( X - Y )
 	var bx = 200 * ( Y - Z )
 	return [ Lx, ax, bx ]
+}
+
+var XYZ_Lab = function ( xyzArray ) {
+  return XYZ_CIELab ( xyzArray, whitePoint.D50 )
 }

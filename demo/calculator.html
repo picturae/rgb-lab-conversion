@@ -1,7 +1,7 @@
 <html>
 <head>
 
-<style = type="text/css">
+<style type="text/css">
 	body {
 		font-size: 18px;
 	}
@@ -52,12 +52,8 @@ window.onload = function () {
 }
 
 function calcXYZ (form) {
-	var XYZ_RGB_function = invGamma_RGB_XYZ
-	if ( form.iccProfile.value === 'eciRGB_v2') {
-		XYZ_RGB_function = invS_RGB_XYZ // mss via een andere functie
-	}
 
-	var xyz = XYZ_RGB_function ( [ form.red.value, form.green.value, form.blue.value ], rgbSpace[form.iccProfile.value] )
+	var xyz = RGB_XYZ ( [ form.red.value, form.green.value, form.blue.value ], form.iccProfile.value )
 
 	form.x.value = xyz[0]
 	form.y.value = xyz[1]
@@ -67,7 +63,7 @@ function calcXYZ (form) {
 
 function calcLab (form) {
 
-	var lab = XYZ_CIELab ( [ form.x.value, form.y.value, form.z.value ], whitePoint.D50 )
+	var lab = XYZ_Lab ( [ form.x.value, form.y.value, form.z.value ] )
 
 	form.Lx.value = lab[0]
 	form.ax.value = lab[1]
