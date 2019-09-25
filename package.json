@@ -1,7 +1,7 @@
 {
-  "name": "rgb-conversion",
+  "name": "rgb-lab-conversion",
   "version": "0.0.0",
-  "description": "Convert RGB to Lab the photohsop way.",
+  "description": "Convert RGB to Lab the photoshop way.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
