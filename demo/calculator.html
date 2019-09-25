@@ -25,7 +25,7 @@
 	}
 </style>
 
-<script src="../index.js"></script>
+<script src="../dist/index.js"></script>
 
 <script>
 
@@ -53,7 +53,7 @@ window.onload = function () {
 
 function calcXYZ (form) {
 
-	var xyz = RGB_XYZ ( [ form.red.value, form.green.value, form.blue.value ], form.iccProfile.value )
+	var xyz = rgbLabConversion.RGB_XYZ ( [ form.red.value, form.green.value, form.blue.value ], form.iccProfile.value )
 
 	form.x.value = xyz[0]
 	form.y.value = xyz[1]
@@ -63,7 +63,7 @@ function calcXYZ (form) {
 
 function calcLab (form) {
 
-	var lab = XYZ_Lab ( [ form.x.value, form.y.value, form.z.value ] )
+	var lab = rgbLabConversion.XYZ_Lab ( [ form.x.value, form.y.value, form.z.value ] )
 
 	form.Lx.value = lab[0]
 	form.ax.value = lab[1]

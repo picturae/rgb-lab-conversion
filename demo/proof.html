@@ -42,7 +42,7 @@
 	}
 </style>
 
-<script src="../index.js"></script>
+<script src="../dist/index.js"></script>
 
 <script>
 
@@ -67,7 +67,7 @@ function displayData (iccProfileName) {
 		tr.innerHTML = `<th class="red">${obj.rgb[0]}</th><th class="green">${obj.rgb[1]}</th><th class="blue">${obj.rgb[2]}</th>`
 		let labPS = obj[iccProfileName]
 		tr.innerHTML += `<th class="lum">${labPS[0]}</th><th class="a-axis">${labPS[1]}</th><th class="b-axis">${labPS[2]}</th>`
-		let labArray = RGB_Lab ( obj.rgb, iccProfileName )
+		let labArray = rgbLabConversion.RGB_Lab ( obj.rgb, iccProfileName )
 		let lab = [Math.round(labArray[0]), Math.round(labArray[1]), Math.round(labArray[2])]
 		tr.innerHTML += `<td class="lum">${lab[0]}</td><td class="a-axis">${lab[1]}</td><td class="b-axis">${lab[2]}</td>`
 		tbody.appendChild(tr)
@@ -83,6 +83,8 @@ window.onload = function () {
 
 </head>
 <body>
+
+<h2>Compare Photoshop Lab values to the calculated value</h2>
 
 <table cellspacing="0">
 	<thead><tr>

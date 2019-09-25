@@ -1,16 +1,29 @@
 {
   "name": "rgb-lab-conversion",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "Convert RGB to Lab the photoshop way.",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "module": "module/index.js",
   "scripts": {
+    "build": "clear-folder dist module && rollup --config",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
     "Photoshop",
     "RGB",
+    "Lab",
     "Convert",
+    "color",
+    "colormodel",
+    "colorspace"
   ],
   "author": "Onno van der Zee",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {},
+  "devDependencies": {
+    "clear-folder": "^1.1.2",
+    "rollup": "^1.21.4",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-terser": "^5.1.2"
+  }
 }
