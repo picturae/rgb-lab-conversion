@@ -132,3 +132,8 @@ var XYZ_CIELab = function ( xyzArray, whitePoint) {
 var XYZ_Lab = function ( xyzArray ) {
   return XYZ_CIELab ( xyzArray, whitePoint.D50 )
 }
+
+var RGB_Lab = function ( rgbArray, iccProfileName ) {
+  var xyzArray = RGB_XYZ ( rgbArray, iccProfileName )
+  return XYZ_CIELab ( xyzArray, whitePoint.D50 )
+}

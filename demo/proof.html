@@ -1,0 +1,97 @@
+<html>
+<head>
+
+<style type="text/css">
+	body {
+		font-size: 18px;
+		color: #333;
+	}
+	td, th {
+		padding: 2px 6px;
+	}
+	.red {
+		color: #FF4136;
+	}
+	.green {
+		color: #2ECC40;
+	}
+	.blue {
+		color: #00A3DA;
+	}
+	.lum {
+		color: #999;
+	}
+	td.lum {
+		background-color: #ccc;
+    color: inherit;
+	}
+	.a-axis {
+		color: #FF30CB;
+	}
+	td.a-axis {
+		background-color: #FF89FF;
+    color: inherit;
+	}
+	.b-axis {
+		color: #EFC200;
+	}
+	td.b-axis {
+		background-color: #FFFA00;
+		color: inherit;
+	}
+</style>
+
+<script src="../index.js"></script>
+
+<script>
+
+var rgb2labPS = [
+	{ rgb: [51,51,51], eciRGB_v2: [20,0,0], AdobeRGB1998: [20,0,0] },
+	{ rgb: [204,204,204], eciRGB_v2: [80,0,0], AdobeRGB1998: [83,0,0], },
+	{ rgb: [154,51,52], eciRGB_v2: [40,53,34], AdobeRGB1998: [42,53,33], },
+
+	{ rgb: [153,51,153], eciRGB_v2: [43,55,-26], AdobeRGB1998: [44,60,-31], },
+	{ rgb: [255,255,51], eciRGB_v2: [97,-11,99], AdobeRGB1998: [98,-16,96], },
+	{ rgb: [255,102,52], eciRGB_v2: [69,78,79], AdobeRGB1998: [69,69,68], },
+
+	{ rgb: [50,51,255], eciRGB_v2: [39,39,-100], AdobeRGB1998: [36,57,-104], },
+	{ rgb: [52,255,51], eciRGB_v2: [83,-128,74], AdobeRGB1998: [84,-121,79], },
+	{ rgb: [255,51,52], eciRGB_v2: [65,91,77], AdobeRGB1998: [64,86,63], },
+]
+
+function displayData (iccProfileName) {
+	let tbody = document.getElementById(iccProfileName)
+	rgb2labPS.forEach(obj => {
+		let tr = document.createElement('tr')
+		tr.innerHTML = `<th class="red">${obj.rgb[0]}</th><th class="green">${obj.rgb[1]}</th><th class="blue">${obj.rgb[2]}</th>`
+		let labPS = obj[iccProfileName]
+		tr.innerHTML += `<th class="lum">${labPS[0]}</th><th class="a-axis">${labPS[1]}</th><th class="b-axis">${labPS[2]}</th>`
+		let labArray = RGB_Lab ( obj.rgb, iccProfileName )
+		let lab = [Math.round(labArray[0]), Math.round(labArray[1]), Math.round(labArray[2])]
+		tr.innerHTML += `<td class="lum">${lab[0]}</td><td class="a-axis">${lab[1]}</td><td class="b-axis">${lab[2]}</td>`
+		tbody.appendChild(tr)
+	})
+}
+
+window.onload = function () {
+	displayData ('eciRGB_v2')
+	displayData ('AdobeRGB1998')
+}
+
+</script>
+
+</head>
+<body>
+
+<table>
+	<thead><tr>
+		<th colspan="3">RGB eciRGB v2</th><th colspan="3">Photoshop Lab</th><th colspan="3">calculated</th>
+	</tr></thead>
+	<tbody id="eciRGB_v2"></tbody>
+	<thead><tr>
+		<th colspan="3">RGB Adobe RGB 1998</th><th colspan="3">Photoshop Lab</th><th colspan="3">calculated</th></tr></thead>
+	<tbody id="AdobeRGB1998"></tbody>
+</table>
+
+</body>
+</html>
