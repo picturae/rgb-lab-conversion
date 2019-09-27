@@ -6,7 +6,7 @@
   "module": "module/index.js",
   "scripts": {
     "build": "clear-folder dist module && rollup --config",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "tap test/test.js"
   },
   "keywords": [
     "Photoshop",
@@ -24,6 +24,7 @@
     "clear-folder": "^1.1.2",
     "rollup": "^1.21.4",
     "rollup-plugin-commonjs": "^10.1.0",
-    "rollup-plugin-terser": "^5.1.2"
+    "rollup-plugin-terser": "^5.1.2",
+    "tap": "^14.6.5"
   }
 }

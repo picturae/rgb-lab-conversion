@@ -2,6 +2,17 @@
 <head>
 
 <style type="text/css">
+	:root {
+		--text-red: #FF4136;
+		--text-green: #2ECC40;
+		--text-blue: #00A3DA;
+		--text-gray: #999;
+		--fill-gray: #CCC;
+		--text-magenta: #FF30CB;
+		--fill-magenta: #FF89FF;
+		--text-amber: #EFC200;
+		--fill-amber: #FAEF00;
+	}
 	body {
 		font-size: 18px;
 		color: #333;
@@ -10,34 +21,38 @@
 		padding: 2px 6px;
 		min-width: 24px;
 	}
+	thead :not(:last-child),
+	tbody th:nth-child(3n) {
+    border-right: 2px solid var(--fill-gray);
+	}
 	.red {
-		color: #FF4136;
+		color: var(--text-red);
 	}
 	.green {
-		color: #2ECC40;
+		color: var(--text-green);
 	}
 	.blue {
-		color: #00A3DA;
+		color: var(--text-blue);
 	}
 	.lum {
-		color: #999;
+		color: var(--text-gray);
 	}
 	td.lum {
-		background-color: #ccc;
+		background-color: var(--fill-gray);
     color: inherit;
 	}
 	.a-axis {
-		color: #FF30CB;
+		color: var(--text-magenta);
 	}
 	td.a-axis {
-		background-color: #FF89FF;
+		background-color: var(--fill-magenta);
     color: inherit;
 	}
 	.b-axis {
-		color: #EFC200;
+		color: var(--text-amber);
 	}
 	td.b-axis {
-		background-color: #FFFA00;
+		background-color: var(--fill-amber);
 		color: inherit;
 	}
 </style>
@@ -46,23 +61,13 @@
 
 <script>
 
-var rgb2labPS = [
-	{ rgb: [51,51,51], eciRGB_v2: [20,0,0], AdobeRGB1998: [20,0,0] },
-	{ rgb: [204,204,204], eciRGB_v2: [80,0,0], AdobeRGB1998: [83,0,0], },
-	{ rgb: [154,51,52], eciRGB_v2: [40,53,34], AdobeRGB1998: [42,53,33], },
-
-	{ rgb: [153,51,153], eciRGB_v2: [43,55,-26], AdobeRGB1998: [44,60,-31], },
-	{ rgb: [255,255,51], eciRGB_v2: [97,-11,99], AdobeRGB1998: [98,-16,96], },
-	{ rgb: [255,102,52], eciRGB_v2: [69,78,79], AdobeRGB1998: [69,69,68], },
-
-	{ rgb: [50,51,255], eciRGB_v2: [39,39,-100], AdobeRGB1998: [36,57,-104], },
-	{ rgb: [52,255,51], eciRGB_v2: [83,-128,74], AdobeRGB1998: [84,-121,79], },
-	{ rgb: [255,51,52], eciRGB_v2: [65,91,77], AdobeRGB1998: [64,86,63], },
-]
-
 function displayData (iccProfileName) {
 	let tbody = document.getElementById(iccProfileName)
-	rgb2labPS.forEach(obj => {
+	let totalDeviation = 0
+	let highestDeviation = 0
+	let count = 0
+
+	rgbLabConversion.rgb2LabStandard.forEach(obj => {
 		let tr = document.createElement('tr')
 		tr.innerHTML = `<th class="red">${obj.rgb[0]}</th><th class="green">${obj.rgb[1]}</th><th class="blue">${obj.rgb[2]}</th>`
 		let labPS = obj[iccProfileName]
@@ -71,7 +76,18 @@ function displayData (iccProfileName) {
 		let lab = [Math.round(labArray[0]), Math.round(labArray[1]), Math.round(labArray[2])]
 		tr.innerHTML += `<td class="lum">${lab[0]}</td><td class="a-axis">${lab[1]}</td><td class="b-axis">${lab[2]}</td>`
 		tbody.appendChild(tr)
+		lab.forEach (( labI, index ) => {
+			let absoluteDeviation = Math.abs( Math.abs( labPS[index] ) - Math.abs( labI ) )
+			totalDeviation += absoluteDeviation
+			highestDeviation = Math.max( absoluteDeviation, highestDeviation )
+			count++
+		})
 	})
+
+	let averageDeviation = Math.round( totalDeviation / count * 1000 ) / 1000
+	highestDeviation = Math.round( highestDeviation * 1000 ) / 1000
+	console.log( `Average absolute deviation with ${iccProfileName}: ${averageDeviation}` )
+	console.log( `Highest absolute deviation with ${iccProfileName}: ${highestDeviation}` )
 }
 
 window.onload = function () {

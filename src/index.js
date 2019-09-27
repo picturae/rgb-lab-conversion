@@ -1,6 +1,7 @@
 import {
   whitePoint,
   rgbSpaces,
+  rgb2LabStandard,
 } from './data.js'
 
 const rgbLabConversion = (function (){
@@ -96,6 +97,7 @@ const rgbLabConversion = (function (){
       var labArray = XYZ_CIELab ( xyzArray, whitePoint.D50 )
       return labArray
     },
+    rgb2LabStandard: rgb2LabStandard,
   }
 })()
 
