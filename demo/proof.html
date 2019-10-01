@@ -1,116 +1,137 @@
 <html>
-<head>
+  <head>
+    <style type="text/css">
+      :root {
+        --text-red: #ff4136;
+        --text-green: #2ecc40;
+        --text-blue: #00a3da;
+        --text-gray: #999;
+        --fill-gray: #ccc;
+        --text-magenta: #ff30cb;
+        --fill-magenta: #ff89ff;
+        --text-amber: #efc200;
+        --fill-amber: #faef00;
+      }
+      body {
+        font-size: 18px;
+        color: #333;
+      }
+      td,
+      th {
+        padding: 2px 6px;
+        min-width: 24px;
+      }
+      thead :not(:last-child),
+      tbody th:nth-child(3n) {
+        border-right: 2px solid var(--fill-gray);
+      }
+      .red {
+        color: var(--text-red);
+      }
+      .green {
+        color: var(--text-green);
+      }
+      .blue {
+        color: var(--text-blue);
+      }
+      .lum {
+        color: var(--text-gray);
+      }
+      td.lum {
+        background-color: var(--fill-gray);
+        color: inherit;
+      }
+      .a-axis {
+        color: var(--text-magenta);
+      }
+      td.a-axis {
+        background-color: var(--fill-magenta);
+        color: inherit;
+      }
+      .b-axis {
+        color: var(--text-amber);
+      }
+      td.b-axis {
+        background-color: var(--fill-amber);
+        color: inherit;
+      }
+    </style>
 
-<style type="text/css">
-	:root {
-		--text-red: #FF4136;
-		--text-green: #2ECC40;
-		--text-blue: #00A3DA;
-		--text-gray: #999;
-		--fill-gray: #CCC;
-		--text-magenta: #FF30CB;
-		--fill-magenta: #FF89FF;
-		--text-amber: #EFC200;
-		--fill-amber: #FAEF00;
-	}
-	body {
-		font-size: 18px;
-		color: #333;
-	}
-	td, th {
-		padding: 2px 6px;
-		min-width: 24px;
-	}
-	thead :not(:last-child),
-	tbody th:nth-child(3n) {
-    border-right: 2px solid var(--fill-gray);
-	}
-	.red {
-		color: var(--text-red);
-	}
-	.green {
-		color: var(--text-green);
-	}
-	.blue {
-		color: var(--text-blue);
-	}
-	.lum {
-		color: var(--text-gray);
-	}
-	td.lum {
-		background-color: var(--fill-gray);
-    color: inherit;
-	}
-	.a-axis {
-		color: var(--text-magenta);
-	}
-	td.a-axis {
-		background-color: var(--fill-magenta);
-    color: inherit;
-	}
-	.b-axis {
-		color: var(--text-amber);
-	}
-	td.b-axis {
-		background-color: var(--fill-amber);
-		color: inherit;
-	}
-</style>
+    <script src="../dist/index.js"></script>
 
-<script src="../dist/index.js"></script>
+    <script>
+      function displayData(iccProfileName) {
+        let tbody = document.getElementById(iccProfileName);
+        let totalDeviation = 0;
+        let highestDeviation = 0;
+        let count = 0;
 
-<script>
+        rgbLabConversion.rgb2LabStandard.forEach(obj => {
+          let tr = document.createElement("tr");
+          tr.innerHTML = `<th class="red">${obj.rgb[0]}</th><th class="green">${
+            obj.rgb[1]
+          }</th><th class="blue">${obj.rgb[2]}</th>`;
+          let labPS = obj[iccProfileName];
+          tr.innerHTML += `<th class="lum">${labPS[0]}</th><th class="a-axis">${
+            labPS[1]
+          }</th><th class="b-axis">${labPS[2]}</th>`;
+          let labArray = rgbLabConversion.rgb2Lab(obj.rgb, iccProfileName);
+          let lab = [
+            Math.round(labArray[0]),
+            Math.round(labArray[1]),
+            Math.round(labArray[2])
+          ];
+          tr.innerHTML += `<td class="lum">${lab[0]}</td><td class="a-axis">${
+            lab[1]
+          }</td><td class="b-axis">${lab[2]}</td>`;
+          tbody.appendChild(tr);
+          lab.forEach((labI, index) => {
+            let absoluteDeviation = Math.abs(
+              Math.abs(labPS[index]) - Math.abs(labI)
+            );
+            totalDeviation += absoluteDeviation;
+            highestDeviation = Math.max(absoluteDeviation, highestDeviation);
+            count++;
+          });
+        });
 
-function displayData (iccProfileName) {
-	let tbody = document.getElementById(iccProfileName)
-	let totalDeviation = 0
-	let highestDeviation = 0
-	let count = 0
+        let averageDeviation =
+          Math.round((totalDeviation / count) * 1000) / 1000;
+        highestDeviation = Math.round(highestDeviation * 1000) / 1000;
+        console.log(
+          `Average absolute deviation with ${iccProfileName}: ${averageDeviation}`
+        );
+        console.log(
+          `Highest absolute deviation with ${iccProfileName}: ${highestDeviation}`
+        );
+      }
 
-	rgbLabConversion.rgb2LabStandard.forEach(obj => {
-		let tr = document.createElement('tr')
-		tr.innerHTML = `<th class="red">${obj.rgb[0]}</th><th class="green">${obj.rgb[1]}</th><th class="blue">${obj.rgb[2]}</th>`
-		let labPS = obj[iccProfileName]
-		tr.innerHTML += `<th class="lum">${labPS[0]}</th><th class="a-axis">${labPS[1]}</th><th class="b-axis">${labPS[2]}</th>`
-		let labArray = rgbLabConversion.RGB_Lab ( obj.rgb, iccProfileName )
-		let lab = [Math.round(labArray[0]), Math.round(labArray[1]), Math.round(labArray[2])]
-		tr.innerHTML += `<td class="lum">${lab[0]}</td><td class="a-axis">${lab[1]}</td><td class="b-axis">${lab[2]}</td>`
-		tbody.appendChild(tr)
-		lab.forEach (( labI, index ) => {
-			let absoluteDeviation = Math.abs( Math.abs( labPS[index] ) - Math.abs( labI ) )
-			totalDeviation += absoluteDeviation
-			highestDeviation = Math.max( absoluteDeviation, highestDeviation )
-			count++
-		})
-	})
+      window.onload = function() {
+        displayData("eciRGB_v2");
+        displayData("AdobeRGB1998");
+      };
+    </script>
+  </head>
+  <body>
+    <h2>Compare Photoshop Lab values to the calculated value</h2>
 
-	let averageDeviation = Math.round( totalDeviation / count * 1000 ) / 1000
-	highestDeviation = Math.round( highestDeviation * 1000 ) / 1000
-	console.log( `Average absolute deviation with ${iccProfileName}: ${averageDeviation}` )
-	console.log( `Highest absolute deviation with ${iccProfileName}: ${highestDeviation}` )
-}
-
-window.onload = function () {
-	displayData ('eciRGB_v2')
-	displayData ('AdobeRGB1998')
-}
-
-</script>
-
-</head>
-<body>
-
-<h2>Compare Photoshop Lab values to the calculated value</h2>
-
-<table cellspacing="0">
-	<thead><tr>
-		<th colspan="3">eciRGB v2</th><th colspan="3">Photoshop Lab</th><th colspan="3">calculated</th>
-	</tr></thead>
-	<tbody id="eciRGB_v2"></tbody>
-	<thead><tr>
-		<th colspan="3">Adobe RGB 1998</th><th colspan="3">Photoshop Lab</th><th colspan="3">calculated</th></tr></thead>
-	<tbody id="AdobeRGB1998"></tbody>
-</table>
-
-</body>
+    <table cellspacing="0">
+      <thead>
+        <tr>
+          <th colspan="3">eciRGB v2</th>
+          <th colspan="3">Photoshop Lab</th>
+          <th colspan="3">calculated</th>
+        </tr>
+      </thead>
+      <tbody id="eciRGB_v2"></tbody>
+      <thead>
+        <tr>
+          <th colspan="3">Adobe RGB 1998</th>
+          <th colspan="3">Photoshop Lab</th>
+          <th colspan="3">calculated</th>
+        </tr>
+      </thead>
+      <tbody id="AdobeRGB1998"></tbody>
+    </table>
+  </body>
 </html>

@@ -1,122 +1,129 @@
 <html>
-<head>
+  <head>
+    <style type="text/css">
+      body {
+        font-size: 18px;
+      }
+      input[type="float"] {
+        width: 67px;
+      }
+      button {
+        border-radius: 4px;
+      }
+      button[type="submit"] {
+        border-color: #00f #00d #00b;
+        background-color: #00b3;
+      }
+      button[type="reset"] {
+        border-color: #f00 #d00 #b00;
+        background-color: #b003;
+      }
+      button[type="button"] {
+        border-color: #0f0 #0d0 #0b0;
+        background-color: #0b03;
+      }
+    </style>
 
-<style type="text/css">
-	body {
-		font-size: 18px;
-	}
-	input[type="float"] {
-		width: 67px;
-	}
-	button {
-		border-radius: 4px;
-	}
-	button[type="submit"] {
-		border-color: #00f #00d #00b;
-		background-color: #00b3;
-	}
-	button[type="reset"] {
-		border-color: #f00 #d00 #b00;
-		background-color: #b003;
-	}
-	button[type="button"] {
-		border-color: #0f0 #0d0 #0b0;
-		background-color: #0b03;
-	}
-</style>
+    <script src="../dist/index.js"></script>
 
-<script src="../dist/index.js"></script>
+    <script>
+      function applyKeyValuePairsFromUrl() {
+        var valueString = location.search.substring(1);
+        if (valueString) {
+          valuePairs = valueString.split("&");
+          valuePairs.forEach(pair => {
+            pair = pair.split("=");
+            if (pair.length === 2) {
+              document.getElementsByName(pair[0])[0].value = pair[1];
+            }
+          });
+        }
+      }
 
-<script>
+      function setFormAction() {
+        document.forms[0].action =
+          location.protocol + "//" + location.host + location.pathname;
+      }
 
-function applyKeyValuePairsFromUrl () {
-	var valueString = location.search.substring(1);
-	if ( valueString ) {
-		valuePairs = valueString.split('&');
-		valuePairs.forEach(pair => {
-			pair = pair.split('=');
-			if ( pair.length === 2 ) {
-				document.getElementsByName(pair[0])[0].value = pair[1];
-			}
-		});
-	}
-}
+      window.onload = function() {
+        setFormAction();
+        applyKeyValuePairsFromUrl();
+      };
 
-function setFormAction () {
-	document.forms[0].action = location.protocol + '//' + location.host + location.pathname
-}
+      function calcXYZ(form) {
+        var xyz = rgbLabConversion.rgb2XYZ(
+          [form.red.value, form.green.value, form.blue.value],
+          form.iccProfile.value
+        );
 
-window.onload = function () {
-	setFormAction ()
-	applyKeyValuePairsFromUrl ()
-}
+        form.x.value = xyz[0];
+        form.y.value = xyz[1];
+        form.z.value = xyz[2];
+      }
 
-function calcXYZ (form) {
+      function calcLab(form) {
+        var lab = rgbLabConversion.XYZ2Lab([
+          form.x.value,
+          form.y.value,
+          form.z.value
+        ]);
 
-	var xyz = rgbLabConversion.RGB_XYZ ( [ form.red.value, form.green.value, form.blue.value ], form.iccProfile.value )
+        form.Lx.value = lab[0];
+        form.ax.value = lab[1];
+        form.bx.value = lab[2];
+      }
+    </script>
+  </head>
+  <body>
+    <h2>Profiled RGB via XYZ with whitepoint to Lab</h2>
 
-	form.x.value = xyz[0]
-	form.y.value = xyz[1]
-	form.z.value = xyz[2]
-}
+    <form name="color" method="GET" action="calculator.html">
+      <button type="submit">Save data in URL</button>
+      <button type="button" onclick="location.reload()">
+        Get data from URL
+      </button>
+      <button type="reset">Reset Form</button>
 
+      <fieldset>
+        <legend>RGB data</legend>
+        <input name="red" type="float" min="0" max="255" />
+        <input name="green" type="float" min="0" max="255" />
+        <input name="blue" type="float" min="0" max="255" />
+        <select name="iccProfile">
+          <option value="eciRGB_v2">eciRGB_v2 (D50)</option>
+          <option value="AdobeRGB1998">AdobeRGB1998 (D65)</option>
+        </select>
+        <button onclick="calcXYZ(this.form)" type="button">
+          convert to XYZ
+        </button>
+      </fieldset>
+      <fieldset>
+        <legend>XYZ intermediate</legend>
+        <input name="x" type="float" min="0" max="255" />
+        <input name="y" type="float" min="0" max="255" />
+        <input name="z" type="float" min="0" max="255" />
+        <button onclick="calcLab(this.form)" type="button">
+          convert to Lab
+        </button>
+      </fieldset>
+      <fieldset>
+        <legend>CIE-L*ab values</legend>
+        <input name="Lx" type="float" min="0" max="255" />
+        <input name="ax" type="float" min="0" max="255" />
+        <input name="bx" type="float" min="0" max="255" />
+      </fieldset>
+    </form>
 
-function calcLab (form) {
-
-	var lab = rgbLabConversion.XYZ_Lab ( [ form.x.value, form.y.value, form.z.value ] )
-
-	form.Lx.value = lab[0]
-	form.ax.value = lab[1]
-	form.bx.value = lab[2]
-}
-
-
-</script>
-
-</head>
-<body>
-
-<h2>Profiled RGB via XYZ with whitepoint to Lab</h2>
-
-<form name="color" method="GET" action="calculator.html">
-
-	<button type="submit">Save data in URL</button>
-	<button type="button" onclick="location.reload()">Get data from URL</button>
-	<button type="reset">Reset Form</button>
-
-	<fieldset>
-		<legend> RGB data </legend>
-		<input name="red" type="float" min="0" max="255" />
-		<input name="green" type="float" min="0" max="255" />
-		<input name="blue" type="float" min="0" max="255" />
-		<select name="iccProfile">
-			<option value="eciRGB_v2">eciRGB_v2 (D50)</option>
-			<option value="AdobeRGB1998">AdobeRGB1998 (D65)</option>
-		</select>
-		<button onclick="calcXYZ(this.form)" type="button">convert to XYZ</button>
-	</fieldset>
-	<fieldset>
-		<legend> XYZ intermediate </legend>
-		<input name="x" type="float" min="0" max="255" />
-		<input name="y" type="float" min="0" max="255" />
-		<input name="z" type="float" min="0" max="255" />
-		<button onclick="calcLab(this.form)" type="button">convert to Lab</button>
-	</fieldset>
-	<fieldset>
-		<legend> CIE-L*ab values </legend>
-		<input name="Lx" type="float" min="0" max="255" />
-		<input name="ax" type="float" min="0" max="255" />
-		<input name="bx" type="float" min="0" max="255" />
-	</fieldset>
-
-</form>
-
-<ul>
-	<code>sources</code>
-	<li><a href="http://www.brucelindbloom.com/">Bruce Lindbloom</a></li>
-	<li><a href="http://www.easyrgb.com/en/math.php">EasyRGB</a></li>
-	<li><a href="http://http://www.rags-int-inc.com/PhotoTechStuff/ColorCalculator/">Rags Gardner</a></li>
-</ul>
-
-</body>
+    <ul>
+      <code>sources</code>
+      <li><a href="http://www.brucelindbloom.com/">Bruce Lindbloom</a></li>
+      <li><a href="http://www.easyrgb.com/en/math.php">EasyRGB</a></li>
+      <li>
+        <a
+          href="http://http://www.rags-int-inc.com/PhotoTechStuff/ColorCalculator/"
+          >Rags Gardner</a
+        >
+      </li>
+    </ul>
+  </body>
 </html>
