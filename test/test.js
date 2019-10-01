@@ -1,22 +1,28 @@
-import tap from 'tap'
-import rgbLabConversion from '../src/index.js'
+import tap from "tap";
+import rgbLabConversion from "../src/index.js";
 
+const absoluteDifference = function(found, wanted) {
+  return Math.abs(Math.abs(found) - Math.abs(wanted));
+};
 
-const toBePlusMin = function (found, wanted, plusMin ) {
-  let diff = Math.abs( Math.abs(found) - Math.abs(wanted) )
-  return ( diff <= plusMin ) ? found : false
-}
+const toBePlusMin = function(difference, plusMin) {
+  return difference <= plusMin;
+};
 
-const rgbSpaces = [
-  'eciRGB_v2',
-  'AdobeRGB1998',
-]
+const rgbSpaces = ["eciRGB_v2", "AdobeRGB1998"];
 
 rgbSpaces.forEach(space => {
   rgbLabConversion.rgb2LabStandard.forEach(proofObj => {
-    let labArray = rgbLabConversion.RGB_Lab(proofObj.rgb, space)
-    labArray.forEach( ( labI, index ) => {
-      tap.equal( labI, toBePlusMin( labI, proofObj[space][index], 3 ) )
-    })
-  })
-})
+    let labArray = rgbLabConversion.rgb2Lab(proofObj.rgb, space);
+    labArray.forEach((labI, index) => {
+      let absDiff =
+        Math.round(absoluteDifference(labI, proofObj[space][index]) * 100) /
+        100;
+      tap.equal(
+        labI,
+        toBePlusMin(absDiff, 3) ? labI : proofObj[space][index],
+        `lab from rgb ${proofObj.rgb} differs ${absDiff} in ${space}`
+      );
+    });
+  });
+});

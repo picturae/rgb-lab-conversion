@@ -6,7 +6,7 @@
   "module": "module/index.js",
   "scripts": {
     "build": "clear-folder dist module && rollup --config",
-    "test": "tap test/test.js"
+    "test": "clr && tap test/test.js"
   },
   "keywords": [
     "Photoshop",
@@ -22,6 +22,7 @@
   "dependencies": {},
   "devDependencies": {
     "clear-folder": "^1.1.2",
+    "clrscr": "^1.0.4",
     "rollup": "^1.21.4",
     "rollup-plugin-commonjs": "^10.1.0",
     "rollup-plugin-terser": "^5.1.2",
