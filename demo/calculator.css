@@ -1,0 +1,26 @@
+/*
+stylesheet for proofing page
+*/
+
+body {
+    font-size: 18px;
+}
+
+input[type="float"] {
+    width: 67px;
+}
+button {
+    border-radius: 4px;
+}
+button[type="submit"] {
+    border-color: #00f #00d #00b;
+    background-color: #00b3;
+}
+button[type="reset"] {
+    border-color: #f00 #d00 #b00;
+    background-color: #b003;
+}
+button[type="button"] {
+    border-color: #0f0 #0d0 #0b0;
+    background-color: #0b03;
+}

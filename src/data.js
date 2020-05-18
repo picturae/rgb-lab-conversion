@@ -54,6 +54,7 @@ const rgbSpaces = {
   }
 };
 
+// for test and demo
 const rgb2LabStandard = [
   // squares
   { rgb: [51, 51, 51], eciRGB_v2: [20, 0, 0], AdobeRGB1998: [20, 0, 0] },
