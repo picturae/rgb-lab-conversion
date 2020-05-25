@@ -38,6 +38,40 @@ const rgbSpaces = {
         },
         whitepoint: 'D50',
     },
+    grayGamma22: {
+        // based on AdobeRGB1998
+        name: 'Gray Gamma 2.2',
+        gamma: 2.19921875,
+        matrix: {
+            D50: {
+                X: {
+                    red: 0.3111242 * whitePoint.D50[0],
+                    green: 0.625656 * whitePoint.D50[0],
+                    blue: 0.0632197 * whitePoint.D50[0],
+                },
+                Y: { red: 0.3111242, green: 0.625656, blue: 0.0632197 },
+                Z: {
+                    red: 0.3111242 * whitePoint.D50[2],
+                    green: 0.625656 * whitePoint.D50[2],
+                    blue: 0.0632197 * whitePoint.D50[2],
+                },
+            },
+            D65: {
+                X: {
+                    red: 0.2973769 * whitePoint.D65[0],
+                    green: 0.6273491 * whitePoint.D65[0],
+                    blue: 0.0752741 * whitePoint.D65[0],
+                },
+                Y: { red: 0.2973769, green: 0.6273491, blue: 0.0752741 },
+                Z: {
+                    red: 0.2973769 * whitePoint.D65[2],
+                    green: 0.6273491 * whitePoint.D65[2],
+                    blue: 0.0752741 * whitePoint.D65[2],
+                },
+            },
+        },
+        whitepoint: 'D65',
+    },
     sRGB: {
         name: 'sRGB IEC61966-2.1',
         gamma: -2.2,

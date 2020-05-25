@@ -9,7 +9,7 @@ const toBePlusMin = function(difference, plusMin) {
     return difference <= plusMin
 }
 
-const rgbSpaces = ['eciRGB_v2', 'AdobeRGB1998', 'sRGB']
+const rgbSpaces = ['eciRGB_v2', 'AdobeRGB1998', 'grayGamma22', 'sRGB']
 const proofCase = rgbLabConversion.cases.squares
 const MAX_ABS_DEVIATION = 1
 

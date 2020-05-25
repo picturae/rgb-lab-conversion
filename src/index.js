@@ -40,6 +40,7 @@ const rgbLabConversion = (function() {
         const sizedXYZ = xyzArray.map(
             (channel, index) => channel / whitePoint[index] / 100,
         )
+        console.log('L*ab after whitepoint', sizedXYZ)
 
         const [X, Y, Z] = sizedXYZ.map((channel, index) => {
             if (channel > 0.008856) {
@@ -70,6 +71,9 @@ const rgbLabConversion = (function() {
             case 'eciRGB v2':
                 inverse = inverseLx
                 break
+            case 'Gray Gamma 2.2':
+                inverse = inverseGamma
+                break
             case 'sRGB IEC61966-2.1':
                 inverse = inverseSRGB
                 break
@@ -80,7 +84,7 @@ const rgbLabConversion = (function() {
                 return
         }
         const inversedRGB = inverse(fractionedRGB, iccProfile)
-
+        console.log('XYZ before whitepoint', inversedRGB)
         const X =
             inversedRGB[0] * 100 * iccProfile.matrix.D50.X.red +
             inversedRGB[1] * 100 * iccProfile.matrix.D50.X.green +
