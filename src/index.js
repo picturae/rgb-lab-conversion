@@ -42,7 +42,47 @@ const rgbLabConversion = (function() {
       blue * iccProfile.matrix.D50.Z.blue;
     return [X, Y, Z];
   };
+  const invEci_RGB_XYZ = function(rgbArray, iccProfile) {
+    // http://www.color.org/chardata/rgb/ecirgb.xalter
+    // Inverse eciRGB Companding
+    var red = rgbArray[0] / 255;
+    var green = rgbArray[1] / 255;
+    var blue = rgbArray[2] / 255;
 
+    if (red > 0.008856) {
+      red = Math.pow((red + 0.16) / 1.16, 3);
+    } else {
+      red = red / 9.033;
+    }
+    if (green > 0.008856) {
+      green = Math.pow((green + 0.16) / 1.16, 3);
+    } else {
+      green = green / 9.033;
+    }
+    if (blue > 0.008856) {
+      blue = Math.pow((blue + 0.16) / 1.16, 3);
+    } else {
+      blue = blue / 9.033
+    }
+
+    red = red * 100;
+    green = green * 100;
+    blue = blue * 100;
+
+    var X =
+      red * iccProfile.matrix.D50.X.red +
+      green * iccProfile.matrix.D50.X.green +
+      blue * iccProfile.matrix.D50.X.blue;
+    var Y =
+      red * iccProfile.matrix.D50.Y.red +
+      green * iccProfile.matrix.D50.Y.green +
+      blue * iccProfile.matrix.D50.Y.blue;
+    var Z =
+      red * iccProfile.matrix.D50.Z.red +
+      green * iccProfile.matrix.D50.Z.green +
+      blue * iccProfile.matrix.D50.Z.blue;
+    return [X, Y, Z];
+  };
   const invGamma_RGB_XYZ = function(rgbArray, iccProfile) {
     // Inverse Gamma Companding
     var red = rgbArray[0] / 255;
@@ -91,15 +131,26 @@ const rgbLabConversion = (function() {
   };
 
   const RGB_XYZ = function(rgbArray, iccProfileName) {
-    // AdobeRGB1998
-    var RGB_XYZ_function = invGamma_RGB_XYZ;
-    if (iccProfileName === 'eciRGB_v2' || iccProfileName === 'sRGB') {
-      RGB_XYZ_function = invS_RGB_XYZ;
+    let RGB_XYZ_function;
+    switch (iccProfileName) {
+      case 'AdobeRGB1998':
+        RGB_XYZ_function = invGamma_RGB_XYZ
+        break;
+      case 'eciRGB_v2':
+        RGB_XYZ_function = invEci_RGB_XYZ;
+        break;
+      case 'sRGB':
+        RGB_XYZ_function = invS_RGB_XYZ;
+        break;
+      default:
+        console.error(`iccProfile "${iccProfileName}" is not supported`);
+        return;
     }
     return RGB_XYZ_function(rgbArray, rgbSpaces[iccProfileName]);
   };
 
   const XYZ_Lab = function(xyzArray) {
+    // photoshop shows lab values with D50
     return XYZ_CIELab(xyzArray, whitePoint.D50);
   };
 
