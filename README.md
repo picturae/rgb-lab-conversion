@@ -31,6 +31,11 @@ There are also methods for the seperate conversion steps:
 In all calculations we start off with unmanaged rgb values. Whitepoint and
 conversion matrices are corrected for the D50 illuminant.
 
+iccProfileName is one of:
+* 'AdobeRGB1998'
+* 'eciRGB_v2'
+* 'sRGB'
+
 ## Demo
 
 Drag and drop
