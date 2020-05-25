@@ -28,15 +28,15 @@ function displayData(iccProfileName) {
                           <th class="b-axis">${labPS[2]}</th>`;
         let labCalc = rgbLabConversion.rgb2Lab(obj.rgb, iccProfileName);
         let lab = labCalc.map(labI => Math.round(labI));
-        tr.innerHTML +=  `<td class="lum">${lab[0]}</td>
-                          <td class="a-axis">${lab[1]}</td>
-                          <td class="b-axis">${lab[2]}</td>`;
+        tr.innerHTML +=  `<td class="lum">${String(labCalc[0]).substr(0,7)}</td>
+                          <td class="a-axis">${String(labCalc[1]).substr(0,7)}</td>
+                          <td class="b-axis">${String(labCalc[2]).substr(0,7)}</td>`;
         tr.innerHTML += `<td class="abs-dev-0">${absDeviation(labPS[0], lab[0])}</td>`;
         tr.innerHTML += `<td class="abs-dev-1">${absDeviation(labPS[1], lab[1])}</td>`;
         tr.innerHTML += `<td class="abs-dev-2">${absDeviation(labPS[2], lab[2])}</td>`;
         tr.innerHTML += `<th class="total-dev">${sumAbsDeviation(labPS, lab)}</th>`;
         tbody.appendChild(tr);
-        lab.forEach((labI, index) => {
+        labCalc.forEach((labI, index) => {
             absoluteDeviation = absDeviation(labPS[index], labI);
             totalDeviation += absoluteDeviation;
             highestDeviation = Math.max(absoluteDeviation, highestDeviation);
