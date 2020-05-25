@@ -1,5 +1,4 @@
 // rollup.config.js
-import commonjs from 'rollup-plugin-commonjs'
 import { terser } from 'rollup-plugin-terser'
 
 const name = "rgbLabConversion"
@@ -18,10 +17,6 @@ export default {
     sourcemap: true,
   }],
   plugins: [
-    commonjs({
-      // to read umd dependencies
-      include: 'node_modules/**',
-    }),
     terser(),
   ]
 }

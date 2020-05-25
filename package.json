@@ -5,26 +5,42 @@
   "main": "dist/index.js",
   "module": "module/index.js",
   "scripts": {
-    "build": "clear-folder dist module && rollup --config",
-    "test": "clr && tap test/test.js"
+    "prebuild": "clear-folder dist module && prettier './{demo,src,test}/*.js' --write",
+    "build": "rollup --config",
+    "once": "npm run test && npm run build",
+    "pretest": "eslint {demo,src,test}/*.js",
+    "test": "clr && tap test/test.js",
+    "watch": "onchange --initial \"{src,test}/*.js\" -- npm run once --silent"
   },
   "keywords": [
     "Photoshop",
     "RGB",
     "Lab",
     "Convert",
-    "color",
-    "colormodel",
-    "colorspace"
+    "colorspace",
+    "adobe RGB (1998)",
+    "eciRGB v2",
+    "sRGB IEC61966-2.1",
+    "front-end"
   ],
   "author": "Onno van der Zee",
   "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/picturae/rgb-lab-conversion.git"
+  },
+  "bugs": {
+    "url": "https://github.com/picturae/rgb-lab-conversion/issues"
+  },
+  "homepage": "https://github.com/picturae/rgb-lab-conversion#readme",
   "dependencies": {},
   "devDependencies": {
     "clear-folder": "^1.1.2",
     "clrscr": "^1.0.4",
+    "eslint": "^6.5.1",
+    "onchange": "^6.1.1",
+    "prettier": "^1.18.2",
     "rollup": "^1.32.1",
-    "rollup-plugin-commonjs": "^10.1.0",
     "rollup-plugin-terser": "^5.3.0",
     "tap": "^14.10.7"
   }
