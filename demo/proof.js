@@ -14,7 +14,8 @@ function displayData(iccProfileName) {
         return tlDev;
     }
 
-    rgbLabConversion.rgb2LabStandard.forEach(obj => {
+    const proofCase = rgbLabConversion.cases.squares;
+    proofCase.forEach(obj => {
         let tr = document.createElement("tr");
         tr.innerHTML = `<th class="red">${obj.rgb[0]}</th>
                         <th class="green">${obj.rgb[1]}</th>

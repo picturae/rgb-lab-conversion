@@ -9,10 +9,11 @@ const toBePlusMin = function(difference, plusMin) {
   return difference <= plusMin;
 };
 
-const rgbSpaces = ["eciRGB_v2", "AdobeRGB1998"];
+const rgbSpaces = ["eciRGB_v2", "AdobeRGB1998", "sRGB"];
+const proofCase = rgbLabConversion.cases.squares;
 
 rgbSpaces.forEach(space => {
-  rgbLabConversion.rgb2LabStandard.forEach(proofObj => {
+  proofCase.forEach(proofObj => {
     let labArray = rgbLabConversion.rgb2Lab(proofObj.rgb, space);
     labArray.forEach((labI, index) => {
       let absDiff =

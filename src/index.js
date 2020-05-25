@@ -1,4 +1,5 @@
-import { whitePoint, rgbSpaces, rgb2LabStandard } from "./data.js";
+import { whitePoint, rgbSpaces } from "./data.js";
+import { cases } from "./cases.js";
 
 const rgbLabConversion = (function() {
   const invS_RGB_XYZ = function(rgbArray, iccProfile) {
@@ -90,9 +91,10 @@ const rgbLabConversion = (function() {
   };
 
   const RGB_XYZ = function(rgbArray, iccProfileName) {
+    // AdobeRGB1998
     var RGB_XYZ_function = invGamma_RGB_XYZ;
-    if (iccProfileName === "eciRGB_v2") {
-      RGB_XYZ_function = invS_RGB_XYZ; // mss via een andere functie
+    if (iccProfileName === 'eciRGB_v2' || iccProfileName === 'sRGB') {
+      RGB_XYZ_function = invS_RGB_XYZ;
     }
     return RGB_XYZ_function(rgbArray, rgbSpaces[iccProfileName]);
   };
@@ -109,7 +111,7 @@ const rgbLabConversion = (function() {
       var labArray = XYZ_CIELab(xyzArray, whitePoint.D50);
       return labArray;
     },
-    rgb2LabStandard: rgb2LabStandard
+    cases: cases
   };
 })();
 
