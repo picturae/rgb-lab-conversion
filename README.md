@@ -1,7 +1,16 @@
 # rgb-lab-conversion
 
 Convert rgb values to Lab values the photoshop way.
-Currently eciRGB v2 and AdobeRGB (1998) are supported.
+Currently supported color profiles:
+* Adobe RGB (1998),
+* eciRGB v2
+* sRGB IEC61966-2.1
+
+## Install
+
+Install the package as npm package. Provided are
+a umd-formatted file in the dist folder to require or just read
+and an es-module in the module folder to import.
 
 ## Usage
 
@@ -22,6 +31,10 @@ There are also methods for the seperate conversion steps:
 In all calculations we start off with unmanaged rgb values. Whitepoint and
 conversion matrices are corrected for the D50 illuminant.
 
-In order to get unmanaged rgb values from the browser, the browser may not
-use color management.
-In firefox you can surf to about:config and set gfx.color_management.mode to 0.
+## Demo
+
+Drag and drop
+.../rgb-lab-conversion/demo/calculator.html
+or
+.../rgb-lab-conversion/demo/proof.html
+in a browser window

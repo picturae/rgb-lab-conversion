@@ -20,8 +20,9 @@
         <input name="green" type="float" min="0" max="255" />
         <input name="blue" type="float" min="0" max="255" />
         <select name="iccProfile">
-          <option value="eciRGB_v2">eciRGB_v2 (D50)</option>
-          <option value="AdobeRGB1998">AdobeRGB1998 (D65)</option>
+          <option value="AdobeRGB1998">Adobe RGB (1998) (D65)</option>
+          <option value="eciRGB_v2">eciRGB v2 (D50)</option>
+          <option value="sRGB_v2">sRGB IEC61966-2.1 (D65)</option>
         </select>
         <button onclick="calcXYZ(this.form)" type="button">
           convert to XYZ

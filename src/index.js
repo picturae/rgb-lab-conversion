@@ -56,7 +56,9 @@ const rgbLabConversion = (function() {
         return [Lx, ax, bx]
     }
 
-    const RGB_XYZ_compand = function(rgbArray, iccProfile) {
+    const RGB_XYZ_compand = function(rgbArray, iccProfileName) {
+        const iccProfile = rgbSpaces[iccProfileName]
+
         // convert to fractions
         const fractionedRGB = rgbArray.map(channel => channel / 255)
 
@@ -72,7 +74,9 @@ const rgbLabConversion = (function() {
                 inverse = inverseSRGB
                 break
             default:
-                console.error(`iccProfile "${iccProfileName}" is not supported`)
+                console.error(
+                    `iccProfile "${iccProfile.name}" is not supported`,
+                )
                 return
         }
         const inversedRGB = inverse(fractionedRGB, iccProfile)
@@ -101,10 +105,8 @@ const rgbLabConversion = (function() {
         rgb2XYZ: RGB_XYZ_compand,
         XYZ2Lab: XYZ_Lab,
         rgb2Lab: function(rgbArray, iccProfileName) {
-            const xyzArray = RGB_XYZ_compand(
-                rgbArray,
-                rgbSpaces[iccProfileName],
-            )
+            const xyzArray = RGB_XYZ_compand(rgbArray, iccProfileName)
+            if (!xyzArray) return
             const labArray = XYZ_CIELab(xyzArray, whitePoint.D50)
             return labArray
         },
