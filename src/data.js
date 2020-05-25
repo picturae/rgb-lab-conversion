@@ -5,6 +5,7 @@ const whitePoint = {
 
 const rgbSpaces = {
     AdobeRGB1998: {
+        name: 'Adobe RGB (1998)',
         gamma: 2.19921875,
         matrix: {
             D50: {
@@ -21,6 +22,7 @@ const rgbSpaces = {
         whitepoint: 'D65',
     },
     eciRGB_v2: {
+        name: 'eciRGB v2',
         gamma: 1.8,
         matrix: {
             D50: {
@@ -37,6 +39,7 @@ const rgbSpaces = {
         whitepoint: 'D50',
     },
     sRGB: {
+        name: 'sRGB IEC61966-2.1',
         gamma: -2.2,
         matrix: {
             D50: {

@@ -2,151 +2,94 @@ import { whitePoint, rgbSpaces } from './data.js'
 import { cases } from './cases.js'
 
 const rgbLabConversion = (function() {
-    const invS_RGB_XYZ = function(rgbArray, iccProfile) {
-        // Inverse sRGB Companding
-        var red = rgbArray[0] / 255
-        var green = rgbArray[1] / 255
-        var blue = rgbArray[2] / 255
-
-        if (red > 0.04045) {
-            red = Math.pow((red + 0.055) / 1.055, 2.4)
-        } else {
-            red = red / 12.92
-        }
-        if (green > 0.04045) {
-            green = Math.pow((green + 0.055) / 1.055, 2.4)
-        } else {
-            green = green / 12.92
-        }
-        if (blue > 0.04045) {
-            blue = Math.pow((blue + 0.055) / 1.055, 2.4)
-        } else {
-            blue = blue / 12.92
-        }
-
-        red = red * 100
-        green = green * 100
-        blue = blue * 100
-
-        var X =
-            red * iccProfile.matrix.D50.X.red +
-            green * iccProfile.matrix.D50.X.green +
-            blue * iccProfile.matrix.D50.X.blue
-        var Y =
-            red * iccProfile.matrix.D50.Y.red +
-            green * iccProfile.matrix.D50.Y.green +
-            blue * iccProfile.matrix.D50.Y.blue
-        var Z =
-            red * iccProfile.matrix.D50.Z.red +
-            green * iccProfile.matrix.D50.Z.green +
-            blue * iccProfile.matrix.D50.Z.blue
-        return [X, Y, Z]
+    const inverseSRGB = function(fractionedRGB, iccProfile) {
+        // http://www.brucelindbloom.com/index.html?Eqn_RGB_to_XYZ.html
+        const inversedSRGB = fractionedRGB.map(channel => {
+            if (channel > 0.04045) {
+                channel = Math.pow((channel + 0.055) / 1.055, 2.4)
+            } else {
+                channel = channel / 12.92
+            }
+            return channel
+        })
+        return inversedSRGB
     }
-    const invEci_RGB_XYZ = function(rgbArray, iccProfile) {
+    const inverseLx = function(fractionedRGB, iccProfile) {
         // http://www.color.org/chardata/rgb/ecirgb.xalter
         // Inverse eciRGB Companding
-        var red = rgbArray[0] / 255
-        var green = rgbArray[1] / 255
-        var blue = rgbArray[2] / 255
-
-        if (red > 0.008856) {
-            red = Math.pow((red + 0.16) / 1.16, 3)
-        } else {
-            red = red / 9.033
-        }
-        if (green > 0.008856) {
-            green = Math.pow((green + 0.16) / 1.16, 3)
-        } else {
-            green = green / 9.033
-        }
-        if (blue > 0.008856) {
-            blue = Math.pow((blue + 0.16) / 1.16, 3)
-        } else {
-            blue = blue / 9.033
-        }
-
-        red = red * 100
-        green = green * 100
-        blue = blue * 100
-
-        var X =
-            red * iccProfile.matrix.D50.X.red +
-            green * iccProfile.matrix.D50.X.green +
-            blue * iccProfile.matrix.D50.X.blue
-        var Y =
-            red * iccProfile.matrix.D50.Y.red +
-            green * iccProfile.matrix.D50.Y.green +
-            blue * iccProfile.matrix.D50.Y.blue
-        var Z =
-            red * iccProfile.matrix.D50.Z.red +
-            green * iccProfile.matrix.D50.Z.green +
-            blue * iccProfile.matrix.D50.Z.blue
-        return [X, Y, Z]
+        const inversedLx = fractionedRGB.map(channel => {
+            if (channel > 0.008856) {
+                channel = Math.pow((channel + 0.16) / 1.16, 3)
+            } else {
+                channel = channel / 9.033
+            }
+            return channel
+        })
+        return inversedLx
     }
-    const invGamma_RGB_XYZ = function(rgbArray, iccProfile) {
-        // Inverse Gamma Companding
-        var red = rgbArray[0] / 255
-        var green = rgbArray[1] / 255
-        var blue = rgbArray[2] / 255
-
-        red = Math.pow(red, iccProfile.gamma)
-        green = Math.pow(green, iccProfile.gamma)
-        blue = Math.pow(blue, iccProfile.gamma)
-
-        red = red * 100
-        green = green * 100
-        blue = blue * 100
-
-        var X =
-            red * iccProfile.matrix.D50.X.red +
-            green * iccProfile.matrix.D50.X.green +
-            blue * iccProfile.matrix.D50.X.blue
-        var Y =
-            red * iccProfile.matrix.D50.Y.red +
-            green * iccProfile.matrix.D50.Y.green +
-            blue * iccProfile.matrix.D50.Y.blue
-        var Z =
-            red * iccProfile.matrix.D50.Z.red +
-            green * iccProfile.matrix.D50.Z.green +
-            blue * iccProfile.matrix.D50.Z.blue
-        return [X, Y, Z]
+    const inverseGamma = function(fractionedRGB, iccProfile) {
+        // http://www.brucelindbloom.com/index.html?Eqn_RGB_to_XYZ.html
+        // https://www.easyrgb.com/en/math.php
+        const inversedGamma = fractionedRGB.map(channel =>
+            Math.pow(channel, iccProfile.gamma),
+        )
+        return inversedGamma
     }
 
     const XYZ_CIELab = function(xyzArray, whitePoint) {
-        var X = xyzArray[0] / whitePoint[0] / 100
-        var Y = xyzArray[1] / whitePoint[1] / 100
-        var Z = xyzArray[2] / whitePoint[2] / 100
+        const sizedXYZ = xyzArray.map(
+            (channel, index) => channel / whitePoint[index] / 100,
+        )
 
-        if (X > 0.008856) X = Math.pow(X, 1 / 3)
-        else X = 7.787 * X + 16 / 116
-        if (Y > 0.008856) Y = Math.pow(Y, 1 / 3)
-        else Y = 7.787 * Y + 16 / 116
-        if (Z > 0.008856) Z = Math.pow(Z, 1 / 3)
-        else Z = 7.787 * Z + 16 / 116
+        const [X, Y, Z] = sizedXYZ.map((channel, index) => {
+            if (channel > 0.008856) {
+                channel = Math.pow(channel, 1 / 3)
+            } else {
+                channel = 7.787 * channel + 16 / 116
+            }
+            return channel
+        })
 
-        var Lx = 116 * Y - 16
-        var ax = 500 * (X - Y)
-        var bx = 200 * (Y - Z)
+        const Lx = 116 * Y - 16
+        const ax = 500 * (X - Y)
+        const bx = 200 * (Y - Z)
         return [Lx, ax, bx]
     }
 
-    const RGB_XYZ = function(rgbArray, iccProfileName) {
-        let RGB_XYZ_function
-        switch (iccProfileName) {
-            case 'AdobeRGB1998':
-                RGB_XYZ_function = invGamma_RGB_XYZ
+    const RGB_XYZ_compand = function(rgbArray, iccProfile) {
+        // convert to fractions
+        const fractionedRGB = rgbArray.map(channel => channel / 255)
+
+        let inverse
+        switch (iccProfile.name) {
+            case 'Adobe RGB (1998)':
+                inverse = inverseGamma
                 break
-            case 'eciRGB_v2':
-                RGB_XYZ_function = invEci_RGB_XYZ
+            case 'eciRGB v2':
+                inverse = inverseLx
                 break
-            case 'sRGB':
-                RGB_XYZ_function = invS_RGB_XYZ
+            case 'sRGB IEC61966-2.1':
+                inverse = inverseSRGB
                 break
             default:
                 console.error(`iccProfile "${iccProfileName}" is not supported`)
                 return
         }
-        return RGB_XYZ_function(rgbArray, rgbSpaces[iccProfileName])
+        const inversedRGB = inverse(fractionedRGB, iccProfile)
+
+        const X =
+            inversedRGB[0] * 100 * iccProfile.matrix.D50.X.red +
+            inversedRGB[1] * 100 * iccProfile.matrix.D50.X.green +
+            inversedRGB[2] * 100 * iccProfile.matrix.D50.X.blue
+        const Y =
+            inversedRGB[0] * 100 * iccProfile.matrix.D50.Y.red +
+            inversedRGB[1] * 100 * iccProfile.matrix.D50.Y.green +
+            inversedRGB[2] * 100 * iccProfile.matrix.D50.Y.blue
+        const Z =
+            inversedRGB[0] * 100 * iccProfile.matrix.D50.Z.red +
+            inversedRGB[1] * 100 * iccProfile.matrix.D50.Z.green +
+            inversedRGB[2] * 100 * iccProfile.matrix.D50.Z.blue
+        return [X, Y, Z]
     }
 
     const XYZ_Lab = function(xyzArray) {
@@ -155,11 +98,14 @@ const rgbLabConversion = (function() {
     }
 
     return {
-        rgb2XYZ: RGB_XYZ,
+        rgb2XYZ: RGB_XYZ_compand,
         XYZ2Lab: XYZ_Lab,
         rgb2Lab: function(rgbArray, iccProfileName) {
-            var xyzArray = RGB_XYZ(rgbArray, iccProfileName)
-            var labArray = XYZ_CIELab(xyzArray, whitePoint.D50)
+            const xyzArray = RGB_XYZ_compand(
+                rgbArray,
+                rgbSpaces[iccProfileName],
+            )
+            const labArray = XYZ_CIELab(xyzArray, whitePoint.D50)
             return labArray
         },
         cases: cases,
