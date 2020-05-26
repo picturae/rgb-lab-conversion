@@ -4,6 +4,7 @@ Convert rgb values to Lab values the photoshop way.
 Currently supported color profiles:
 * Adobe RGB (1998),
 * eciRGB v2
+* Gray Gamma 2.2
 * sRGB IEC61966-2.1
 
 ## Install
@@ -34,6 +35,7 @@ conversion matrices are corrected for the D50 illuminant.
 iccProfileName is one of:
 * 'AdobeRGB1998'
 * 'eciRGB_v2'
+* 'grayGamma22'
 * 'sRGB'
 
 ## Demo

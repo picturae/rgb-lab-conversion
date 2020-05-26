@@ -1,3 +1,18 @@
+/**
+ * Round at decimals
+ * @private
+ * @param {number} number - any number to round
+ * @param {number} decimals - number of decimals to round at
+ * @returns {number} the rounded number
+ */
+const roundAt = function(number, decimals) {
+    if (number < 1 + 'e-' + decimals && number > -1 + 'e-' + decimals) {
+        return 0
+    }
+    // https://www.jacklmoore.com/notes/rounding-in-javascript/
+    return Number(Math.round(number + 'e' + decimals) + 'e-' + decimals)
+}
+
 function displayData(iccProfileName) {
     let tbody = document.getElementById(iccProfileName)
     let totalDeviation = 0
@@ -27,30 +42,24 @@ function displayData(iccProfileName) {
                           <th class="b-axis">${labPS[2]}</th>`
         let labCalc = rgbLabConversion.rgb2Lab(obj.rgb, iccProfileName)
         let lab = labCalc.map(labI => Math.round(labI))
-        tr.innerHTML += `<td class="lum">${String(labCalc[0]).substr(0, 7)}</td>
-                          <td class="a-axis">${String(labCalc[1]).substr(
-                              0,
-                              7,
-                          )}</td>
-                          <td class="b-axis">${String(labCalc[2]).substr(
-                              0,
-                              7,
-                          )}</td>`
-        tr.innerHTML += `<td class="abs-dev-0">${absDeviation(
-            labPS[0],
-            lab[0],
+        tr.innerHTML += `<td class="lum">${roundAt(labCalc[0], 3)}</td>
+                          <td class="a-axis">${roundAt(labCalc[1], 3)}</td>
+                          <td class="b-axis">${roundAt(labCalc[2], 3)}</td>`
+        tr.innerHTML += `<td class="abs-dev-0">${roundAt(
+            absDeviation(labPS[0], lab[0]),
+            3,
         )}</td>`
-        tr.innerHTML += `<td class="abs-dev-1">${absDeviation(
-            labPS[1],
-            lab[1],
+        tr.innerHTML += `<td class="abs-dev-1">${roundAt(
+            absDeviation(labPS[1], lab[1]),
+            3,
         )}</td>`
-        tr.innerHTML += `<td class="abs-dev-2">${absDeviation(
-            labPS[2],
-            lab[2],
+        tr.innerHTML += `<td class="abs-dev-2">${roundAt(
+            absDeviation(labPS[2], lab[2]),
+            3,
         )}</td>`
-        tr.innerHTML += `<th class="total-dev">${sumAbsDeviation(
-            labPS,
-            lab,
+        tr.innerHTML += `<th class="total-dev">${roundAt(
+            sumAbsDeviation(labPS, lab),
+            3,
         )}</th>`
         tbody.appendChild(tr)
         labCalc.forEach((labI, index) => {

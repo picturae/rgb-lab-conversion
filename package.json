@@ -1,6 +1,6 @@
 {
   "name": "rgb-lab-conversion",
-  "version": "2.0.1",
+  "version": "2.1.0",
   "description": "Convert RGB to Lab the photoshop way.",
   "main": "dist/index.js",
   "module": "module/index.js",
@@ -13,10 +13,10 @@
     "watch": "onchange --initial \"{src,test}/*.js\" -- npm run once --silent"
   },
   "keywords": [
-    "Photoshop",
+    "photoshop",
     "RGB",
     "Lab",
-    "Convert",
+    "convert",
     "colorspace",
     "adobe RGB (1998)",
     "eciRGB v2",

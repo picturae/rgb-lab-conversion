@@ -1,6 +1,9 @@
 import { whitePoint, rgbSpaces } from './data.js'
 import { cases } from './cases.js'
 
+const kappa = 24389 / 27 // 903.3
+const epsilon = 216 / 24389 // 0.008856
+
 const rgbLabConversion = (function() {
     const inverseSRGB = function(fractionedRGB, iccProfile) {
         // http://www.brucelindbloom.com/index.html?Eqn_RGB_to_XYZ.html
@@ -18,10 +21,10 @@ const rgbLabConversion = (function() {
         // http://www.color.org/chardata/rgb/ecirgb.xalter
         // Inverse eciRGB Companding
         const inversedLx = fractionedRGB.map(channel => {
-            if (channel > 0.008856) {
+            if (channel > epsilon) {
                 channel = Math.pow((channel + 0.16) / 1.16, 3)
             } else {
-                channel = channel / 9.033
+                channel = channel / kappa / 100
             }
             return channel
         })
@@ -36,13 +39,20 @@ const rgbLabConversion = (function() {
         return inversedGamma
     }
 
+    /**
+     * XYZ to Lab conversion with color temperature correction
+     * @param {number[]} xyzArray
+     * @param {number[]} whitePoint
+     * @returns {number[]} labArray
+     */
     const XYZ_CIELab = function(xyzArray, whitePoint) {
         const sizedXYZ = xyzArray.map(
             (channel, index) => channel / whitePoint[index] / 100,
         )
+        // console.log('L*ab after whitepoint', sizedXYZ)
 
         const [X, Y, Z] = sizedXYZ.map((channel, index) => {
-            if (channel > 0.008856) {
+            if (channel > epsilon) {
                 channel = Math.pow(channel, 1 / 3)
             } else {
                 channel = 7.787 * channel + 16 / 116
@@ -56,8 +66,18 @@ const rgbLabConversion = (function() {
         return [Lx, ax, bx]
     }
 
+    /**
+     * RGB to XYZ companding for some icc profiles
+     * @param {number[]} rgbArray
+     * @param {string} iccProfileName - one of the predefined rgbSpaces
+     * @returns {number[]} xyzArray
+     */
     const RGB_XYZ_compand = function(rgbArray, iccProfileName) {
         const iccProfile = rgbSpaces[iccProfileName]
+        if (!iccProfile || !iccProfile.name) {
+            console.error(`unknown iccProfile "${iccProfileName}"`)
+            return
+        }
 
         // convert to fractions
         const fractionedRGB = rgbArray.map(channel => channel / 255)
@@ -70,17 +90,19 @@ const rgbLabConversion = (function() {
             case 'eciRGB v2':
                 inverse = inverseLx
                 break
+            case 'Gray Gamma 2.2':
+                inverse = inverseGamma
+                break
             case 'sRGB IEC61966-2.1':
                 inverse = inverseSRGB
                 break
             default:
-                console.error(
-                    `iccProfile "${iccProfile.name}" is not supported`,
-                )
+                console.error(`unsupported iccProfile "${iccProfile.name}"`)
                 return
         }
         const inversedRGB = inverse(fractionedRGB, iccProfile)
 
+        // console.log('XYZ before whitepoint', inversedRGB)
         const X =
             inversedRGB[0] * 100 * iccProfile.matrix.D50.X.red +
             inversedRGB[1] * 100 * iccProfile.matrix.D50.X.green +
@@ -96,6 +118,11 @@ const rgbLabConversion = (function() {
         return [X, Y, Z]
     }
 
+    /**
+     * XYZ to L*ab conversion like photoshop does
+     * @param {number[]} xyzArray
+     * @returns {number[]} labArray
+     */
     const XYZ_Lab = function(xyzArray) {
         // photoshop shows lab values with D50
         return XYZ_CIELab(xyzArray, whitePoint.D50)
