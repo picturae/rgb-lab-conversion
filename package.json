@@ -4,6 +4,7 @@
   "description": "Convert RGB to Lab the photoshop way.",
   "main": "dist/index.js",
   "module": "module/index.js",
+  "types": "src/index.d.ts",
   "scripts": {
     "prebuild": "clear-folder dist module && prettier './{demo,src,test}/*.js' --write",
     "build": "rollup --config",
