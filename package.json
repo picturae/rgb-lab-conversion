@@ -35,7 +35,7 @@
   "homepage": "https://github.com/picturae/rgb-lab-conversion#readme",
   "dependencies": {},
   "devDependencies": {
-    "clear-folder": "^1.1.2",
+    "clear-folder": "^2.0.0",
     "clrscr": "^1.0.4",
     "eslint": "^6.5.1",
     "onchange": "^6.1.1",
